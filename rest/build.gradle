@@ -1,0 +1,45 @@
+plugins {
+    id 'java'
+    id 'war'
+}
+
+version 'unspecified'
+
+sourceCompatibility = 1.8
+
+repositories {
+    // Use jcenter for resolving dependencies.
+    // You can declare any Maven/Ivy/file repository here.
+    jcenter()
+    mavenCentral()
+}
+dependencies {
+    compile project(':back-security')
+    compile project(':back-ear')
+    // This dependency is used by the application.
+    implementation 'com.google.guava:guava:28.0-jre'
+
+    // Use JUnit test framework
+    testImplementation 'junit:junit:4.12'
+    // https://mvnrepository.com/artifact/org.jboss.resteasy/resteasy-jaxrs
+    providedCompile group: 'org.jboss.resteasy', name: 'resteasy-jaxrs', version: '3.9.3.Final'
+    // https://mvnrepository.com/artifact/javax.servlet/servlet-api
+    providedCompile group: 'javax.servlet', name: 'servlet-api', version: '2.5'
+    // https://mvnrepository.com/artifact/javax.inject/javax.inject
+    compile group: 'javax.inject', name: 'javax.inject', version: '1'
+    // https://mvnrepository.com/artifact/javax/javaee-api
+    compile group: 'javax', name: 'javaee-api', version: '8.0'
+    compile group: 'javax.ejb', name: 'javax.ejb-api', version: '3.2.2'
+    // https://mvnrepository.com/artifact/dom4j/dom4j
+    providedCompile group: 'dom4j', name: 'dom4j', version: '1.6.1'
+    // https://mvnrepository.com/artifact/org.springframework/spring-web
+    compile group: 'org.springframework', name: 'spring-web', version: '3.0.4.RELEASE'
+
+
+}
+war {
+    from 'back/rest/src' // adds a file-set to the root of the archive
+    webInf { from 'back/rest/src/main/webapp/WEB-INF' } // adds a file-set to the WEB-INF dir.
+    classpath fileTree('additionalLibs') // adds a file-set to the WEB-INF/lib dir.
+}
+

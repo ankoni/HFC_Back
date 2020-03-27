@@ -1,0 +1,23 @@
+plugins {
+    id 'java'
+}
+
+version 'unspecified'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    compile group: 'org.projectlombok', name: 'lombok', version: '1.18.10'
+    annotationProcessor 'org.projectlombok:lombok:1.16.20'
+    // https://mvnrepository.com/artifact/javax.servlet/javax.servlet-api
+    compile group: 'javax.servlet', name: 'javax.servlet-api', version: '3.0.1'
+    // https://mvnrepository.com/artifact/jboss/jboss-annotations-ejb3
+    compile group: 'jboss', name: 'jboss-annotations-ejb3', version: '4.2.2.GA'
+    // https://mvnrepository.com/artifact/javax.ejb/ejb-api
+    compile group: 'javax.ejb', name: 'ejb-api', version: '3.0'
+}

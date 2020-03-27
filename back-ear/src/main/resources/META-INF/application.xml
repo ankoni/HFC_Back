@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<application xmlns="http://java.sun.com/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/application_6.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="6">
+    <application-name>back-ear</application-name>
+    <initialize-in-order>false</initialize-in-order>
+    <module>
+        <web>
+            <web-uri>rest.war</web-uri>
+            <context-root>rest</context-root>
+        </web>
+    </module>
+</application>

@@ -1,0 +1,83 @@
+buildscript {
+
+    repositories {
+        // Use jcenter for resolving dependencies.
+        // You can declare any Maven/Ivy/file repository here.
+        jcenter()
+        mavenCentral()
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+
+    dependencies {
+        classpath "com.mkring.wildlydeplyplugin:wildfly-deploy-gradle-plugin:0.3.0-wildfly15"
+    }
+}
+plugins {
+    id 'ear'
+    id 'java'
+    id 'war'
+    id 'com.mkring.wildlydeplyplugin.deploy-wildfly-plugin'
+}
+
+version 'unspecified'
+
+sourceCompatibility = 1.8
+
+repositories {
+    jcenter()
+    mavenCentral()
+}
+
+dependencies {
+    // The following dependencies will be the ear modules and
+    // will be placed in the ear root
+    deploy project(path: ':rest', configuration: 'archives')
+
+    // This dependency is used by the application.
+    implementation 'com.google.guava:guava:28.0-jre'
+    // The following dependencies will become ear libs and will
+    // be placed in a dir configured via the libDirName property
+    // earlib group: 'log4j', name: 'log4j'
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    // https://mvnrepository.com/artifact/javax/javaee-api
+    compile group: 'javax', name: 'javaee-api', version: '8.0'
+    compile group: 'javax.ejb', name: 'javax.ejb-api', version: '3.2.2'
+    // https://mvnrepository.com/artifact/org.wildfly/wildfly-ejb-client-bom
+    compile group: 'org.wildfly', name: 'wildfly-ejb-client-bom', version: '18.0.1.Final', ext: 'pom'
+    // https://mvnrepository.com/artifact/org.projectlombok/lombok
+    compile group: 'org.projectlombok', name: 'lombok', version: '1.18.10'
+    annotationProcessor 'org.projectlombok:lombok:1.16.20'
+    // https://mvnrepository.com/artifact/com.oracle/ojdbc6
+    compile group: 'com.oracle', name: 'ojdbc6', version: '11.2.0.3'
+    // https://mvnrepository.com/artifact/org.hibernate/hibernate-entitymanager
+    compile group: 'org.hibernate', name: 'hibernate-entitymanager', version: '4.1.7.Final'
+    // https://mvnrepository.com/artifact/org.hibernate.javax.persistence/hibernate-jpa-2.0-api
+    compile group: 'org.hibernate.javax.persistence', name: 'hibernate-jpa-2.0-api', version: '1.0.1.Final'
+
+    earlib group: 'log4j', name: 'log4j', version: '1.2.15', ext: 'jar'
+
+    // https://mvnrepository.com/artifact/dom4j/dom4j
+    providedCompile group: 'dom4j', name: 'dom4j', version: '1.6.1'
+}
+
+ear {
+    appDirName 'src/main/java'  // use application metadata found in this folder
+    // put dependent libraries into APP-INF/lib inside the generated EAR
+    libDirName 'APP-INF/lib'
+    deploymentDescriptor {  // custom entries for application.xml:
+//      fileName = "application.xml"  // same as the default value
+//      version = "6"  // same as the default value
+//      applicationName = "customear"
+        initializeInOrder = true
+//      displayName = "Custom Ear"  // defaults to project.name
+        // defaults to project.description if not set
+//      description = "My customized EAR for the Gradle documentation"
+//      libraryDirectory = "APP-INF/lib"  // not needed, above libDirName setting does this
+//      module("my.jar", "java")  // won't deploy as my.jar isn't deploy dependency
+//      webModule("my.war", "/")  // won't deploy as my.war isn't deploy dependency
+//      securityRole "admin"
+//      securityRole "superadmin"
+    }
+}
