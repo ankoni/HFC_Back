@@ -5,5 +5,7 @@ import model.account.UserAccountData;
 import java.util.List;
 
 public interface AccountReadService {
-    List<UserAccountData> getAccountByUserId(String id);
+    List<UserAccountData> getAccountByUserId();
+
+    UserAccountData getAccountById(String id);
 }

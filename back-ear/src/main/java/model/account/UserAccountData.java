@@ -16,7 +16,13 @@ public class UserAccountData implements Serializable {
     public String id;
     public String name;
     public BigDecimal balance;
+    /**
+     * Дата изменения счета
+     */
     public Date update;
+    /**
+     * Дата создания
+     */
     public Date create;
     public boolean newRow;
 

@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import persistence.ConstData;
 import persistence.EntityId;
 
 import javax.persistence.Column;
@@ -31,5 +32,21 @@ public class Category extends EntityId {
         super(id);
         setName(name);
         setParentId(parentId);
+    }
+
+    public boolean isIncome() {
+        if (getParentId() == null) {
+            return getId().equals(ConstData.INCOME_ID);
+        } else {
+            return getParentId().equals(ConstData.INCOME_ID);
+        }
+    }
+
+    public boolean isConsumption() {
+        if (getParentId() == null) {
+            return getId().equals(ConstData.CONSUMPTION_ID);
+        } else {
+            return getParentId().equals(ConstData.CONSUMPTION_ID);
+        }
     }
 }

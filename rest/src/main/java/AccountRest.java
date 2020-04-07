@@ -15,11 +15,9 @@ public class AccountRest {
     AccountWriteService accountWriteService;
 
     @GET
-    @Path("user/{id}")
-    public List<UserAccountData> getUserAccounts(
-            @PathParam("id") String id
-    ) {
-        return accountReadService.getAccountByUserId(id);
+    @Path("user")
+    public List<UserAccountData> getUserAccounts() {
+        return accountReadService.getAccountByUserId();
     }
 
     @PUT
@@ -29,5 +27,37 @@ public class AccountRest {
             List<UserAccountData> data
     ) {
         return accountWriteService.updateUserAccounts(id, data);
+    }
+
+    @POST
+    @Path("user/create")
+    public List<UserAccountData> createUserAccount(
+            UserAccountData data
+    ) {
+        return accountWriteService.createUserAccount(data);
+    }
+
+    @POST
+    @Path("user/edit")
+    public List<UserAccountData> editUserAccount(
+            UserAccountData data
+    ) {
+        return accountWriteService.editUserAccount(data);
+    }
+
+    @POST
+    @Path("user/delete/{id}")
+    public List<UserAccountData> deleteUserAccount(
+            @PathParam("id") String id
+    ) {
+        return accountWriteService.deleteUserAccount(id);
+    }
+
+    @GET
+    @Path("{id}")
+    public UserAccountData getAccountById(
+            @PathParam("id") String id
+    ) {
+        return accountReadService.getAccountById(id);
     }
 }
