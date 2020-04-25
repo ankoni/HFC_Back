@@ -4,10 +4,7 @@ import model.user.UserDto;
 import persistence.user.User;
 
 import javax.annotation.Resource;
-import javax.ejb.EJBContext;
-import javax.ejb.LocalBean;
-import javax.ejb.Remote;
-import javax.ejb.Stateless;
+import javax.ejb.*;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
@@ -19,6 +16,9 @@ public class UserReadServiceImpl implements UserReadService {
     @Resource
     EJBContext ejbContext;
 
+    @Resource
+    private SessionContext sessionContext;
+
     @PersistenceContext
     EntityManager entityManager;
 
@@ -29,6 +29,7 @@ public class UserReadServiceImpl implements UserReadService {
             if (!user.isEmpty()) {
                 return user.stream().map(it->new UserDto(it.getId(), it.getName(), it.getRegDate())).findFirst().get();
             }
+            sessionContext.getContextData();
         }
         return null;
     }

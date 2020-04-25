@@ -6,6 +6,7 @@ import model.finance.record.FinanceRecordTableRow;
 
 import javax.ejb.EJB;
 import javax.ws.rs.*;
+import java.text.ParseException;
 import java.util.List;
 
 @Path("/finance")
@@ -26,7 +27,7 @@ public class FinanceRest {
     @Path("record/user/create")
     public List<FinanceRecordTableRow> createUserFinanceRecord(
             CreateFinanceRecordDto createData
-    ) {
+    ) throws ParseException {
         return financeRecordWriteService.createUserFinanceRecord(createData);
     }
 

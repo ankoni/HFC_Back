@@ -1,10 +1,13 @@
 import api.account.AccountReadService;
 import api.account.AccountWriteService;
+import model.account.AccountBalanceRow;
 import model.account.UserAccountData;
 
 import javax.ejb.EJB;
 import javax.ws.rs.*;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @Path("/account")
 public class AccountRest {
@@ -59,5 +62,17 @@ public class AccountRest {
             @PathParam("id") String id
     ) {
         return accountReadService.getAccountById(id);
+    }
+
+    @GET
+    @Path("user/dailyBalance")
+    public Map<Date, List<AccountBalanceRow>> getAccountBalanceTable() {
+        return accountReadService.getUserDailyBalance();
+    }
+
+    @GET
+    @Path("user/totalBalance")
+    public Double getUserTotalBalance() {
+        return accountReadService.getUserTotalBalance();
     }
 }

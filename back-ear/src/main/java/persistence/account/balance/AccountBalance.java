@@ -22,18 +22,18 @@ public class AccountBalance {
     private AccountBalanceId accountBalanceId;
 
     @Column(name = "balance")
-    private BigDecimal balance;
+    private Double balance;
 
-    public AccountBalance(Account account, BigDecimal balance, Date date) {
+    public AccountBalance(Account account, Date date, Double balance) {
         AccountBalanceId accountBalanceId = new AccountBalanceId(account, date);
         setBalance(balance);
     }
 
-    public void changeBalance(Category category, BigDecimal amount) {
+    public void changeBalance(Category category, Double amount) {
         if (category.isIncome()) {
-            setBalance(getBalance().add(amount));
+            setBalance(getBalance() + amount);
         } else if (category.isConsumption()) {
-            setBalance(getBalance().subtract(amount));
+            setBalance(getBalance() - amount);
         }
     }
 

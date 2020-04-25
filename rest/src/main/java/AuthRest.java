@@ -10,6 +10,7 @@ import javax.security.auth.login.LoginException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpUpgradeHandler;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import java.io.IOException;

@@ -2,10 +2,8 @@ package impl.finance.record;
 
 import api.finance.record.FinanceRecordWriteService;
 import impl.UserReadServiceImpl;
-import model.IdNameObj;
 import model.finance.record.CreateFinanceRecordDto;
 import model.finance.record.FinanceRecordTableRow;
-import persistence.ConstData;
 import persistence.account.Account;
 import persistence.account.balance.AccountBalance;
 import persistence.account.balance.AccountBalanceId;
@@ -20,10 +18,10 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 @Remote(FinanceRecordWriteService.class)
 @LocalBean
@@ -39,7 +37,7 @@ public class FinanceRecordWriteServiceImpl implements FinanceRecordWriteService 
     private EntityManager entityManager;
 
     @Override
-    public List<FinanceRecordTableRow> createUserFinanceRecord(CreateFinanceRecordDto data) {
+    public List<FinanceRecordTableRow> createUserFinanceRecord(CreateFinanceRecordDto data) throws ParseException {
         User user = userReadService.getUserPersist();
 
         UserRecord userRecord = new UserRecord();
@@ -53,22 +51,28 @@ public class FinanceRecordWriteServiceImpl implements FinanceRecordWriteService 
         if (data.changeAccountBalance) {
             account.changeBalance(category, data.getAmount(), false);
 
-            List<AccountBalance> accountBalanceList = entityManager.createQuery("select main from AccountBalance main \n" +
-                    "where main.accountBalanceId.account.id = :account and main.accountBalanceId.date = :date", AccountBalance.class)
-                    .setParameter("account", account.getId())
-                    .setParameter("date", data.recordDate)
-                    .getResultList();
-            if (!accountBalanceList.isEmpty()) {
-                accountBalanceList.get(0).changeBalance(category, data.getAmount());
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+            Date createDate =  format.parse(format.format(data.recordDate));
+
+            AccountBalance accountBalance =
+                    entityManager.find(AccountBalance.class,
+                            new AccountBalanceId(account, createDate));
+
+            if (accountBalance != null ) {
+                accountBalance.changeBalance(category, data.getAmount());
             } else {
-                AccountBalanceId accountBalanceId = new AccountBalanceId(
-                        account, data.getRecordDate()
-                );
-                AccountBalance accountBalance = new AccountBalance(
-                        accountBalanceId,
-                        account.getBalance()
-                );
-                entityManager.persist(accountBalance);
+                List<Account> allAccounts = entityManager.createQuery("select main.account from UserAccount main \n" +
+                        "where main.user.id = :userId", Account.class)
+                        .setParameter("userId", user.getId())
+                        .getResultList();
+                allAccounts.forEach(it -> {
+                    AccountBalance createAccountBalance = new AccountBalance(
+                            new AccountBalanceId(it, createDate),
+                            it.getBalance()
+                    );
+                    entityManager.persist(createAccountBalance);
+                });
+
             }
         }
 
@@ -95,17 +99,17 @@ public class FinanceRecordWriteServiceImpl implements FinanceRecordWriteService 
                     .setParameter("date", record.getRecordDate())
                     .getResultList();
             if (record.getCategory().isIncome()) {
-                account.setBalance(account.getBalance().subtract(record.getAmount()));
+                account.setBalance(account.getBalance() - record.getAmount());
             } else {
-                account.setBalance(account.getBalance().add(record.getAmount()));
+                account.setBalance(account.getBalance() + record.getAmount());
             }
 
             if (!accountBalanceList.isEmpty()) {
                 AccountBalance accountBalance = accountBalanceList.get(0);
                 if (record.getCategory().isIncome()) {
-                    accountBalance.setBalance(accountBalance.getBalance().subtract(record.getAmount()));
+                    accountBalance.setBalance( accountBalance.getBalance() - record.getAmount());
                 } else {
-                    accountBalance.setBalance(accountBalance.getBalance().add(record.getAmount()));
+                    accountBalance.setBalance(accountBalance.getBalance() + record.getAmount());
                 }
             }
         }

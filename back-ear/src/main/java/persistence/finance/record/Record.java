@@ -11,7 +11,6 @@ import persistence.account.Account;
 import persistence.category.Category;
 
 import javax.persistence.*;
-import java.math.BigDecimal;
 import java.util.Date;
 
 @Getter
@@ -30,7 +29,7 @@ public class Record extends EntityId {
     public Account account;
 
     @Column(name = "amount")
-    public BigDecimal amount;
+    public Double amount;
 
     @Column(name = "description")
     public String description;
@@ -46,7 +45,7 @@ public class Record extends EntityId {
     @Column(name = "ACCOUNT_INCLUDE")
     public boolean accountInclude;
 
-    public Record(String id, Category category, Account account, BigDecimal amount, String description, Date recordDate, Date date, boolean include) {
+    public Record(String id, Category category, Account account, Double amount, String description, Date recordDate, Date date, boolean include) {
         super(id);
         setCategory(category);
         setAccount(account);

@@ -4,16 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.checkerframework.checker.units.qual.C;
 import persistence.category.Category;
-import persistence.user.User;
-
 import javax.persistence.*;
 import java.io.Serializable;
-import java.math.BigDecimal;
-import java.text.DecimalFormat;
 import java.util.Date;
-import java.util.List;
 
 @Getter
 @Setter
@@ -29,7 +23,7 @@ public class Account implements Serializable {
     private String name;
 
     @Column(name = "balance")
-    private BigDecimal balance;
+    private Double balance;
 
     /**
      * Дата изменения счета
@@ -48,7 +42,7 @@ public class Account implements Serializable {
     @Column(name = "DEL_DATE")
     private Date delDate;
 
-    public Account(String id, String name, BigDecimal balance, Date changeDate, Date addDate) {
+    public Account(String id, String name, Double balance, Date changeDate, Date addDate) {
         setId(id);
         setName(name);
         setBalance(balance);
@@ -56,11 +50,11 @@ public class Account implements Serializable {
         setAddDate(addDate);
     }
 
-    public void changeBalance(Category category, BigDecimal amount, boolean deleteRecord) {
+    public void changeBalance(Category category, Double amount, boolean deleteRecord) {
         if ((category.isIncome() && !deleteRecord) || (deleteRecord && category.isConsumption())) {
-            setBalance(getBalance().add(amount));
+            setBalance(getBalance() + amount);
         } else if ((category.isConsumption() && !deleteRecord) || (deleteRecord && category.isIncome())) {
-            setBalance(getBalance().subtract(amount));
+            setBalance(getBalance() - amount);
         }
         setChangeDate(new Date());
     }

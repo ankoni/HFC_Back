@@ -7,8 +7,6 @@ import lombok.Setter;
 import model.IdNameObj;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
-import java.text.DecimalFormat;
 import java.util.Date;
 
 @AllArgsConstructor
@@ -16,7 +14,7 @@ import java.util.Date;
 @Getter
 @Setter
 public class CreateFinanceRecordDto implements Serializable {
-    public BigDecimal amount;
+    public Double amount;
     public IdNameObj category;
     public IdNameObj account;
     public String description;

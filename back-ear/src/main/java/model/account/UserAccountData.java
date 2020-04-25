@@ -2,10 +2,7 @@ package model.account;
 
 import lombok.*;
 
-import javax.sql.DataSource;
 import java.io.Serializable;
-import java.math.BigDecimal;
-import java.text.DecimalFormat;
 import java.util.Date;
 
 @Setter
@@ -15,7 +12,7 @@ import java.util.Date;
 public class UserAccountData implements Serializable {
     public String id;
     public String name;
-    public BigDecimal balance;
+    public Double balance;
     /**
      * Дата изменения счета
      */
@@ -26,7 +23,7 @@ public class UserAccountData implements Serializable {
     public Date create;
     public boolean newRow;
 
-    public UserAccountData(String id, String name, BigDecimal balance, Date update, Date create) {
+    public UserAccountData(String id, String name, Double balance, Date update, Date create) {
         setId(id);
         setName(name);
         setBalance(balance);
