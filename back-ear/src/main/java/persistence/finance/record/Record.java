@@ -8,9 +8,11 @@ import model.finance.record.CreateFinanceRecordDto;
 import model.finance.record.FinanceRecordTableRow;
 import persistence.EntityId;
 import persistence.account.Account;
+import persistence.account.balance.AccountBalance;
 import persistence.category.Category;
 
 import javax.persistence.*;
+import java.text.ParseException;
 import java.util.Date;
 
 @Getter
@@ -56,7 +58,7 @@ public class Record extends EntityId {
         setAccountInclude(include);
     }
 
-    public void editRecord(FinanceRecordTableRow editData, EntityManager em) {
+    public void editRecord(FinanceRecordTableRow editData, EntityManager em) throws ParseException {
         boolean changeAmount = !getAmount().equals(editData.getAmount());
         boolean changeAccount = !getAccount().getId().equals(editData.getAccount().getId());
 
@@ -73,6 +75,10 @@ public class Record extends EntityId {
                 setAccount(newAccount);
             }
             getAccount().changeBalance(newCategory != null ? newCategory : getCategory(), editData.getAmount(), false);
+
+            AccountBalance accountBalance = new AccountBalance();
+            accountBalance = accountBalance.getAccountBalance(account, createDate, em);
+            accountBalance.setBalance(account.getBalance());
         }
 
         setAmount(editData.getAmount());

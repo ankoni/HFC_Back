@@ -51,16 +51,16 @@ public class FinanceRecordWriteServiceImpl implements FinanceRecordWriteService 
         if (data.changeAccountBalance) {
             account.changeBalance(category, data.getAmount(), false);
 
-            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-            Date createDate =  format.parse(format.format(data.recordDate));
-
-            AccountBalance accountBalance =
-                    entityManager.find(AccountBalance.class,
-                            new AccountBalanceId(account, createDate));
+            AccountBalance accountBalance = new AccountBalance();
+            accountBalance = accountBalance.getAccountBalance(account, data.getRecordDate(), entityManager);
 
             if (accountBalance != null ) {
-                accountBalance.changeBalance(category, data.getAmount());
+                accountBalance.setBalance(account.getBalance());
+//                accountBalance.changeBalance(category, data.getAmount());
             } else {
+                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+                Date createDate =  format.parse(format.format(data.getRecordDate()));
+
                 List<Account> allAccounts = entityManager.createQuery("select main.account from UserAccount main \n" +
                         "where main.user.id = :userId", Account.class)
                         .setParameter("userId", user.getId())
@@ -80,7 +80,7 @@ public class FinanceRecordWriteServiceImpl implements FinanceRecordWriteService 
     }
 
     @Override
-    public List<FinanceRecordTableRow> editUserFinanceRecord(String id, FinanceRecordTableRow editData) {
+    public List<FinanceRecordTableRow> editUserFinanceRecord(String id, FinanceRecordTableRow editData) throws ParseException {
         Record record = entityManager.find(Record.class, id);
 
         record.editRecord(editData, entityManager);

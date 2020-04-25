@@ -81,7 +81,7 @@ public class BackLoginModule implements LoginModule {
                 while (resultSet.next()) {
                     this.privilege.add(resultSet.getString("name"));
                 }
-
+                dataSource.getConnection().close();
                 return true;
             } else {
                 throw new LoginException("Неверный логин или пароль");

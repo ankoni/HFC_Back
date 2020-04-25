@@ -5,10 +5,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import persistence.account.Account;
-import persistence.category.Category;
 
 import javax.persistence.*;
-import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @Getter
@@ -29,12 +29,10 @@ public class AccountBalance {
         setBalance(balance);
     }
 
-    public void changeBalance(Category category, Double amount) {
-        if (category.isIncome()) {
-            setBalance(getBalance() + amount);
-        } else if (category.isConsumption()) {
-            setBalance(getBalance() - amount);
-        }
+    public AccountBalance getAccountBalance(Account account, Date date, EntityManager entityManager) throws ParseException {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        Date createDate =  format.parse(format.format(date));
+        return entityManager.find(AccountBalance.class,
+                        new AccountBalanceId(account, createDate));
     }
-
 }

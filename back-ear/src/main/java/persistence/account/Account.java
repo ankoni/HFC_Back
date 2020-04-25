@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import persistence.account.balance.AccountBalance;
 import persistence.category.Category;
 import javax.persistence.*;
 import java.io.Serializable;

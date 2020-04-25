@@ -30,7 +30,9 @@ public class AuthFilter implements Filter {
 
         String loginURI = httpRequest.getContextPath() + "/auth/login";
         boolean isLoginRequest = httpRequest.getRequestURI().equals(loginURI);
-        chain.doFilter(request, response);
+        if (isLoginRequest || isLoggedIn) {
+            chain.doFilter(request, response);
+        }
         /*if (isLoggedIn && isLoginRequest) {
             // the user is already logged in and he's trying to login again
             // then forward to the homepage

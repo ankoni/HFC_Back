@@ -44,7 +44,7 @@ public class FinanceRest {
     public List<FinanceRecordTableRow> editUserFinanceRecord (
             @PathParam("id") String id,
             FinanceRecordTableRow editDto
-    ) {
+    ) throws ParseException {
         return financeRecordWriteService.editUserFinanceRecord(id, editDto);
     }
 }
