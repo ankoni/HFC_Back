@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import model.IdNameObj;
 import model.finance.record.CreateFinanceRecordDto;
 import model.finance.record.FinanceRecordTableRow;
 import persistence.EntityId;
@@ -56,6 +57,18 @@ public class Record extends EntityId {
         setRecordDate(recordDate);
         setCreateDate(date);
         setAccountInclude(include);
+    }
+
+    public FinanceRecordTableRow convertToTableRow() {
+        return new FinanceRecordTableRow(
+                getId(),
+                new IdNameObj(getAccount().getId(), getAccount().getName()),
+                getAmount(),
+                new IdNameObj(getCategory().getId(), getCategory().getName()),
+                getDescription(),
+                getRecordDate(),
+                getCreateDate()
+        );
     }
 
     public void editRecord(FinanceRecordTableRow editData, EntityManager em) throws ParseException {

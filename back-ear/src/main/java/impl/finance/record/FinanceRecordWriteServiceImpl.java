@@ -20,6 +20,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -37,7 +38,7 @@ public class FinanceRecordWriteServiceImpl implements FinanceRecordWriteService 
     private EntityManager entityManager;
 
     @Override
-    public List<FinanceRecordTableRow> createUserFinanceRecord(CreateFinanceRecordDto data) throws ParseException {
+    public FinanceRecordTableRow createUserFinanceRecord(CreateFinanceRecordDto data) throws ParseException {
         User user = userReadService.getUserPersist();
 
         UserRecord userRecord = new UserRecord();
@@ -56,7 +57,6 @@ public class FinanceRecordWriteServiceImpl implements FinanceRecordWriteService 
 
             if (accountBalance != null ) {
                 accountBalance.setBalance(account.getBalance());
-//                accountBalance.changeBalance(category, data.getAmount());
             } else {
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
                 Date createDate =  format.parse(format.format(data.getRecordDate()));
@@ -76,46 +76,31 @@ public class FinanceRecordWriteServiceImpl implements FinanceRecordWriteService 
             }
         }
 
-        return financeRecordReadService.getUserRecords();
+        return userRecord.getRecord().convertToTableRow();
     }
 
     @Override
-    public List<FinanceRecordTableRow> editUserFinanceRecord(String id, FinanceRecordTableRow editData) throws ParseException {
+    public FinanceRecordTableRow editUserFinanceRecord(String id, FinanceRecordTableRow editData) throws ParseException {
         Record record = entityManager.find(Record.class, id);
 
         record.editRecord(editData, entityManager);
 
-        return financeRecordReadService.getUserRecords();
+        return editData;
     }
 
     @Override
-    public List<FinanceRecordTableRow> deleteUserFinanceRecord(String id) {
+    public FinanceRecordTableRow deleteUserFinanceRecord(String id) throws ParseException {
         Record record = entityManager.find(Record.class, id);
         Account account = record.getAccount();
         if (record.accountInclude) {
-            List<AccountBalance> accountBalanceList = entityManager.createQuery("select main from AccountBalance main \n" +
-                    "where main.accountBalanceId.account.id = :account and main.accountBalanceId.date = :date", AccountBalance.class)
-                    .setParameter("account", account.getId())
-                    .setParameter("date", record.getRecordDate())
-                    .getResultList();
-            if (record.getCategory().isIncome()) {
-                account.setBalance(account.getBalance() - record.getAmount());
-            } else {
-                account.setBalance(account.getBalance() + record.getAmount());
-            }
-
-            if (!accountBalanceList.isEmpty()) {
-                AccountBalance accountBalance = accountBalanceList.get(0);
-                if (record.getCategory().isIncome()) {
-                    accountBalance.setBalance( accountBalance.getBalance() - record.getAmount());
-                } else {
-                    accountBalance.setBalance(accountBalance.getBalance() + record.getAmount());
-                }
-            }
+            AccountBalance accountBalance = new AccountBalance();
+            accountBalance = accountBalance.getAccountBalance(account, record.getRecordDate(), entityManager);
+            account.changeBalance(record.getCategory(), record.getAmount(), true);
+            accountBalance.setBalance(account.getBalance());
         }
 
         entityManager.remove(entityManager.find(UserRecord.class, id));
         entityManager.remove(record);
-        return financeRecordReadService.getUserRecords();
+        return record.convertToTableRow();
     }
 }
