@@ -1,11 +1,11 @@
 package impl.account;
 
-import api.account.AccountReadService;
 import api.account.AccountWriteService;
 import impl.UserReadServiceImpl;
 import model.account.UserAccountData;
 import persistence.account.Account;
 import persistence.account.UserAccount;
+import persistence.account.balance.AccountBalance;
 import persistence.user.User;
 
 import javax.ejb.LocalBean;
@@ -14,9 +14,8 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceContextType;
+import java.text.ParseException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Remote(AccountWriteService.class)
 @LocalBean
@@ -76,7 +75,7 @@ public class AccountWriteServiceImpl implements AccountWriteService {
     }
 
     @Override
-    public List<UserAccountData> createUserAccount(UserAccountData createDto) {
+    public List<UserAccountData> createUserAccount(UserAccountData createDto) throws ParseException {
         Account newAccount = new Account(
                 UUID.randomUUID().toString(),
                 createDto.getName(),
@@ -92,6 +91,15 @@ public class AccountWriteServiceImpl implements AccountWriteService {
                 newAccount
         );
         entityManager.persist(userAccount);
+
+        AccountBalance accountBalance = new AccountBalance();
+        accountBalance = accountBalance.getAccountBalance(userAccount.getAccount(), new Date(), entityManager);
+
+        if (accountBalance != null ) {
+            accountBalance.setBalance(userAccount.getAccount().getBalance());
+        } else {
+            AccountBalance.createNewDailyBalance(entityManager, new Date(), userAccount.getUser().getId());
+        }
 
         return accountReadService.getAccountByUserId();
     }

@@ -1,20 +1,16 @@
-import api.auth.AuthService;
-import com.sun.security.auth.UserPrincipal;
+import api.UserReadService;
 import model.auth.AuthData;
-import model.auth.AuthError;
+import model.auth.Permission;
+import model.user.UserDto;
 
 import javax.ejb.EJB;
-import javax.inject.Inject;
-import javax.naming.CommunicationException;
-import javax.security.auth.login.LoginException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpUpgradeHandler;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Response;
 import java.io.IOException;
-import java.security.Principal;
 
 @Path("/auth")
 @Produces({"application/json"})
@@ -26,33 +22,32 @@ public class AuthRest {
     @Context
     private HttpServletResponse response;
 
-    @EJB(lookup = "java:jboss/exported/rest/AuthService!api.auth.AuthService")
-    AuthService authService;
+    @EJB(lookup = "java:jboss/exported/rest/UserReadService!api.UserReadService")
+    UserReadService userReadService;
 
     @GET
     @Path("/check")
-    public Principal checkAuth() {
-        return request.getUserPrincipal();
+    public UserDto checkAuth() {
+        return userReadService.getUser();
     }
 
     @POST
     @Path("/login")
-    public String authProcess(
-            AuthData data
+    public Response authProcess(
+            AuthData data,
+            @Context HttpServletRequest httpRequest
     ) throws ServletException, IOException {
-        if (request.getUserPrincipal() == null) {
+        if (httpRequest.getUserPrincipal() == null) {
             try {
                 request.login(data.getLogin(), data.getPassword());
-                request.getSession().setAttribute("userName",
-                        request.getUserPrincipal() != null
-                                ? request.getUserPrincipal().getName() : null);
+                Response res = Response.accepted().build();
+                return res;
             } catch (ServletException ex) {
-                return "Неверный логин или пароль";
+                throw new ServletException(ex.getMessage());
             }
         } else {
-            return "Пользователь уже в системе";
+            throw new ServletException("Пользователь уже в системе");
         }
-        return null;
     }
 
     @POST
@@ -60,10 +55,18 @@ public class AuthRest {
     public String authProcess() {
         try {
             request.logout();
-            request.getSession().setAttribute("userName", null);
         } catch (ServletException e) {
             return e.getMessage();
         }
        return null;
+    }
+
+    @POST
+    @Path("checkPermission")
+    @Consumes("text/plain")
+    public boolean checkPermission(
+            Permission permission
+    ) {
+        return userReadService.accessAllowForCurrentUser(permission);
     }
 }

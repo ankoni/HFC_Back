@@ -13,7 +13,6 @@ import javax.security.auth.login.LoginException;
 import javax.security.auth.spi.LoginModule;
 import javax.sql.DataSource;
 import java.io.IOException;
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -27,7 +26,7 @@ public class BackLoginModule implements LoginModule {
     private CallbackHandler handler;
     private Subject subject;
     private Map<String, ?> options;
-    private String login;
+    private String userId;
     private List<String> privilege;
     private RolePrincipal rolePrincipal;
     private UserPrincipal userPrincipal;
@@ -72,7 +71,7 @@ public class BackLoginModule implements LoginModule {
 
             boolean userExist = id != null;
             if (name != null && userExist) {
-                login = name;
+                userId = id;
 
                 connection = dataSource.getConnection().prepareStatement(GET_PRIVILEGE_SQL);
                 connection.setString(1, name);
@@ -93,7 +92,7 @@ public class BackLoginModule implements LoginModule {
 
     @Override
     public boolean commit() throws LoginException {
-        userPrincipal = new UserPrincipal(login);
+        userPrincipal = new UserPrincipal(userId);
         subject.getPrincipals().add(userPrincipal);
         if (privilege != null && privilege.size() > 0) {
             for (String groupName : privilege) {

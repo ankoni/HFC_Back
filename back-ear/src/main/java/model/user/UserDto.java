@@ -12,5 +12,6 @@ import java.util.Date;
 public class UserDto implements Serializable {
     public String id;
     public String name;
+    public String privilege;
     public Date regDate;
 }

@@ -4,7 +4,11 @@ import model.account.AccountBalanceRow;
 import model.account.UserAccountData;
 
 import javax.ejb.EJB;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
+import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +20,11 @@ public class AccountRest {
     AccountReadService accountReadService;
     @EJB(lookup = "java:jboss/exported/back-ear/AccountWriteService!api.account.AccountWriteService")
     AccountWriteService accountWriteService;
+
+    @Context
+    private HttpServletRequest request;
+    @Context
+    private HttpServletResponse response;
 
     @GET
     @Path("user")
@@ -36,7 +45,7 @@ public class AccountRest {
     @Path("user/create")
     public List<UserAccountData> createUserAccount(
             UserAccountData data
-    ) {
+    ) throws ParseException {
         return accountWriteService.createUserAccount(data);
     }
 
@@ -73,6 +82,7 @@ public class AccountRest {
     @GET
     @Path("user/totalBalance")
     public Double getUserTotalBalance() {
+        request.getUserPrincipal();
         return accountReadService.getUserTotalBalance();
     }
 }

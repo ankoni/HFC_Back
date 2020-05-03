@@ -60,24 +60,14 @@ dependencies {
 
     // https://mvnrepository.com/artifact/dom4j/dom4j
     providedCompile group: 'dom4j', name: 'dom4j', version: '1.6.1'
+    // https://mvnrepository.com/artifact/jboss/jboss-annotations-ejb3
+    compile group: 'jboss', name: 'jboss-annotations-ejb3', version: '4.2.2.GA'
 }
 
 ear {
-    appDirName 'src/main/java'  // use application metadata found in this folder
-    // put dependent libraries into APP-INF/lib inside the generated EAR
+    appDirName 'src/main/java'
     libDirName 'APP-INF/lib'
-    deploymentDescriptor {  // custom entries for application.xml:
-//      fileName = "application.xml"  // same as the default value
-//      version = "6"  // same as the default value
-//      applicationName = "customear"
+    deploymentDescriptor {
         initializeInOrder = true
-//      displayName = "Custom Ear"  // defaults to project.name
-        // defaults to project.description if not set
-//      description = "My customized EAR for the Gradle documentation"
-//      libraryDirectory = "APP-INF/lib"  // not needed, above libDirName setting does this
-//      module("my.jar", "java")  // won't deploy as my.jar isn't deploy dependency
-//      webModule("my.war", "/")  // won't deploy as my.war isn't deploy dependency
-//      securityRole "admin"
-//      securityRole "superadmin"
     }
 }

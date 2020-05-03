@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd
+    http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd ">
+
+    <changeSet id="add_roles_data_030520200149" author="Ankoni">
+        <insert
+                dbms="h2, oracle"
+                tableName="privilege">
+            <column name="id" value="72efa084-8ca5-11ea-bc55-0242ac130003"/>
+            <column name="name" value="ADMIN"/>
+        </insert>
+        <insert
+                dbms="h2, oracle"
+                tableName="privilege">
+            <column name="id" value="8c83b1d4-8ca5-11ea-bc55-0242ac130003"/>
+            <column name="name" value="BASIC"/>
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>

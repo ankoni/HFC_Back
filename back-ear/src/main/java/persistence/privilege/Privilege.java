@@ -24,5 +24,5 @@ public class Privilege implements Serializable {
     public String name;
 
     @OneToMany(mappedBy = "privilege")
-    private List<User> users;
+    private List<Access> accessList;
 }

@@ -1,6 +1,5 @@
 package persistence;
 
-import com.sun.corba.se.spi.ior.Identifiable;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

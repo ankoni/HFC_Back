@@ -1,6 +1,5 @@
 package impl;
 
-import api.UserReadService;
 import api.UserWriteService;
 import model.auth.AuthData;
 import model.user.UserCreateDto;
@@ -16,9 +15,6 @@ import javax.ejb.Remote;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.security.auth.login.LoginException;
-import java.lang.reflect.Constructor;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -73,6 +69,7 @@ public class UserWriteServiceImpl implements UserWriteService {
         return new UserDto(
                 user.getId(),
                 user.getName(),
+                user.getPrivilege().getName(),
                 user.getRegDate()
         );
     }

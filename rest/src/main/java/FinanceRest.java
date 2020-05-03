@@ -6,6 +6,8 @@ import model.finance.record.FinanceRecordTableRow;
 
 import javax.annotation.Nullable;
 import javax.ejb.EJB;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -21,11 +23,17 @@ public class FinanceRest {
     @EJB(lookup = "java:jboss/exported/back-ear/FinanceRecordWriteService!api.finance.record.FinanceRecordWriteService")
     FinanceRecordWriteService financeRecordWriteService;
 
+    @Context
+    private HttpServletRequest request;
+    @Context
+    private HttpServletResponse response;
+
     @POST
     @Path("/record/user")
     public List<FinanceRecordTableRow> getAllFinanceUserRecords(
             @Nullable List<FilterData> filter
     ) {
+        request.getUserPrincipal();
         return financeRecordReadService.getUserRecords(filter);
     }
 

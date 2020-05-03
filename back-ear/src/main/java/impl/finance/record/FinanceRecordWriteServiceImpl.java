@@ -6,7 +6,6 @@ import model.finance.record.CreateFinanceRecordDto;
 import model.finance.record.FinanceRecordTableRow;
 import persistence.account.Account;
 import persistence.account.balance.AccountBalance;
-import persistence.account.balance.AccountBalanceId;
 import persistence.category.Category;
 import persistence.finance.record.Record;
 import persistence.finance.record.UserRecord;
@@ -19,10 +18,6 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 @Remote(FinanceRecordWriteService.class)
 @LocalBean
@@ -30,9 +25,6 @@ import java.util.List;
 public class FinanceRecordWriteServiceImpl implements FinanceRecordWriteService {
     @Inject
     UserReadServiceImpl userReadService;
-
-    @Inject
-    FinanceRecordReadServiceImpl financeRecordReadService;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -58,21 +50,7 @@ public class FinanceRecordWriteServiceImpl implements FinanceRecordWriteService 
             if (accountBalance != null ) {
                 accountBalance.setBalance(account.getBalance());
             } else {
-                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-                Date createDate =  format.parse(format.format(data.getRecordDate()));
-
-                List<Account> allAccounts = entityManager.createQuery("select main.account from UserAccount main \n" +
-                        "where main.user.id = :userId", Account.class)
-                        .setParameter("userId", user.getId())
-                        .getResultList();
-                allAccounts.forEach(it -> {
-                    AccountBalance createAccountBalance = new AccountBalance(
-                            new AccountBalanceId(it, createDate),
-                            it.getBalance()
-                    );
-                    entityManager.persist(createAccountBalance);
-                });
-
+                AccountBalance.createNewDailyBalance(entityManager, data.getRecordDate(), user.getId());
             }
         }
 

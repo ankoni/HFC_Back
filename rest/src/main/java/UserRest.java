@@ -4,12 +4,9 @@ import model.auth.AuthData;
 import model.user.UserCreateDto;
 import model.user.UserDto;
 import model.user.UserEditDto;
-import persistence.user.User;
 
 import javax.ejb.EJB;
-import javax.security.auth.login.LoginException;
 import javax.ws.rs.*;
-import java.util.List;
 
 @Path("/user")
 public class UserRest {
